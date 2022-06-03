@@ -101,17 +101,31 @@ void main() {
       //   verifyNever(mockGenderizeLocalDataSource.cacheGender(genderizeModel));
       // });
 
-      test('harus return serverfailure ketika koneksi ke server berhasil',
-          () async {
+      // test('harus return serverfailure ketika koneksi ke server berhasil',
+      //     () async {
+      //   //arrange
+      //   when(mockGenderizeRemoteDataSource.getPrediction(any))
+      //       .thenThrow(ServerException());
+      //   //act
+      //   final result = await repositoryImpl.getPrediction(name);
+      //   //assert
+      //   verify(mockGenderizeRemoteDataSource.getPrediction(name));
+      //   verifyZeroInteractions(mockGenderizeLocalDataSource);
+      //   expect(result, equals(Left(ServerFailure())));
+      // });
+    });
+
+    runTestsOffline(() {
+      test('harus return data pada sharedpreference', () async {
         //arrange
-        when(mockGenderizeRemoteDataSource.getPrediction(any))
-            .thenThrow(ServerException());
+        when(mockGenderizeLocalDataSource.getPrediction())
+            .thenAnswer((_) async => genderizeModel);
         //act
         final result = await repositoryImpl.getPrediction(name);
         //assert
-        verify(mockGenderizeRemoteDataSource.getPrediction(name));
-        verifyZeroInteractions(mockGenderizeLocalDataSource);
-        expect(result, equals(Left(ServerFailure())));
+        verifyZeroInteractions(mockGenderizeRemoteDataSource);
+        verify(mockGenderizeLocalDataSource.getPrediction());
+        expect(result, equals(Right(genderizeModel)));
       });
     });
   });
