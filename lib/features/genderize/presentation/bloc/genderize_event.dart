@@ -6,3 +6,9 @@ abstract class GenderizeEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class GetPredictionGender extends GenderizeEvent {
+  final String name;
+
+  GetPredictionGender(this.name);
+}

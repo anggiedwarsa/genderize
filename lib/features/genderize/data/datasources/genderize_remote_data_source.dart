@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 
@@ -11,7 +13,9 @@ class GenderizeRemoteDataSourceImpl implements GenderizeRemoteDataSource {
   GenderizeRemoteDataSourceImpl({required this.dio});
 
   Future<GenderizeModel> _getPredcitionFromUrl(String name) async {
-    final url = 'https://api.genderize.io/?name=$name';
+    final url = 'https://api.genderize.io/?name=${Uri.encodeFull(name)}';
+    log(url);
+    log(name);
     final response = await dio.get(url);
 
     if (response.statusCode == 200) {
