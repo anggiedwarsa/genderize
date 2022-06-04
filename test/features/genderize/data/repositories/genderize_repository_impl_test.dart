@@ -88,31 +88,31 @@ void main() {
         expect(result, equals(Right(genderizeModel)));
       });
 
-      // test('harus menyimpan data setelah menerima data dari server', () async {
-      //   // arrange
-      //   when(mockGenderizeRemoteDataSource.getPrediction(any))
-      //       .thenAnswer((_) async => genderizeModel);
+      test('harus menyimpan data setelah menerima data dari server', () async {
+        // arrange
+        when(mockGenderizeRemoteDataSource.getPrediction(any))
+            .thenAnswer((_) async => genderizeModel);
 
-      //   // act
-      //   await repositoryImpl.getPrediction(name);
+        // act
+        await repositoryImpl.getPrediction(name);
 
-      //   // assert
-      //   verify(mockGenderizeRemoteDataSource.getPrediction(name));
-      //   verifyNever(mockGenderizeLocalDataSource.cacheGender(genderizeModel));
-      // });
+        // assert
+        verify(mockGenderizeRemoteDataSource.getPrediction(name));
+        verify(mockGenderizeLocalDataSource.cacheGender(genderizeModel));
+      });
 
-      // test('harus return serverfailure ketika koneksi ke server berhasil',
-      //     () async {
-      //   //arrange
-      //   when(mockGenderizeRemoteDataSource.getPrediction(any))
-      //       .thenThrow(ServerException());
-      //   //act
-      //   final result = await repositoryImpl.getPrediction(name);
-      //   //assert
-      //   verify(mockGenderizeRemoteDataSource.getPrediction(name));
-      //   verifyZeroInteractions(mockGenderizeLocalDataSource);
-      //   expect(result, equals(Left(ServerFailure())));
-      // });
+      test('harus return serverfailure ketika koneksi ke server berhasil',
+          () async {
+        //arrange
+        when(mockGenderizeRemoteDataSource.getPrediction(any))
+            .thenThrow(ServerException());
+        //act
+        final result = await repositoryImpl.getPrediction(name);
+        //assert
+        verify(mockGenderizeRemoteDataSource.getPrediction(name));
+        verifyZeroInteractions(mockGenderizeLocalDataSource);
+        expect(result, equals(Left(ServerFailure())));
+      });
     });
 
     runTestsOffline(() {

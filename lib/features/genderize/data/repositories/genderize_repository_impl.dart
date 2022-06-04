@@ -26,8 +26,13 @@ class GenderizeRepositoryImpl implements GenderizeRepository {
     if (await networkInfo.isConnected) {
       try {
         var response = await getPrediction();
+        localDataSource.cacheGender(response);
         return Right(response);
       } on DioError catch (error) {
+        return Left(ServerFailure());
+      } on GenderNotFoundFailure {
+        return Left(GenderNotFoundFailure());
+      } on ServerException {
         return Left(ServerFailure());
       }
     } else {

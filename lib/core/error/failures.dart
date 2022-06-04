@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:genderize/core/util/constant_error_message.dart';
 
@@ -28,4 +27,10 @@ class ConnectionFailure extends Failure {
   String toString() {
     return 'ConnectionFailure{errorMessage: $errorMessage}';
   }
+}
+
+class GenderNotFoundFailure extends Failure {
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
 }
