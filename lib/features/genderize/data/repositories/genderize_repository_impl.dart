@@ -47,7 +47,6 @@ class GenderizeRepositoryImpl implements GenderizeRepository {
 
   @override
   Future<Either<Failure, Genderize>> getPrediction(String name) async {
-    // TODO: implement getPrediction
     return await _getPrediction(() {
       return remoteDataSource.getPrediction(name)!;
     });

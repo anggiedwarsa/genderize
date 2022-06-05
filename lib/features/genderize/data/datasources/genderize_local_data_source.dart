@@ -18,7 +18,6 @@ class GenderizeLocalDataSourceImpl implements GenderizeLocalDataSource {
 
   @override
   Future<GenderizeModel>? getPrediction() {
-    // TODO: implement getPrediction
     final jsonString = sharedPreferences.getString(CACHED_GENDERIZE);
     if (jsonString != null) {
       return Future.value(GenderizeModel.fromJson(json.decode(jsonString)));
@@ -29,7 +28,6 @@ class GenderizeLocalDataSourceImpl implements GenderizeLocalDataSource {
 
   @override
   Future<void>? cacheGender(GenderizeModel genderToCache) {
-    // TODO: implement cacheGender
     return sharedPreferences.setString(
         CACHED_GENDERIZE, json.encode(genderToCache.toJson()));
   }

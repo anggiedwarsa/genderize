@@ -7,6 +7,5 @@ class Genderize extends Equatable {
   Genderize({required this.name, required this.gender});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [name, gender];
 }

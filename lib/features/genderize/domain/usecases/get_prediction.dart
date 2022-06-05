@@ -22,6 +22,5 @@ class GenderizeParams extends Equatable {
   GenderizeParams({required this.name});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [name];
 }
