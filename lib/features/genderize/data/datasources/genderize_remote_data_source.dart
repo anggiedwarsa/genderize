@@ -1,10 +1,6 @@
-import 'dart:developer';
-
-import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/features/genderize/data/models/genderize_model.dart';
-import 'package:genderize/features/genderize/presentation/bloc/genderize_bloc.dart';
 
 abstract class GenderizeRemoteDataSource {
   Future<GenderizeModel>? getPrediction(String name);
@@ -31,6 +27,5 @@ class GenderizeRemoteDataSourceImpl implements GenderizeRemoteDataSource {
   }
 
   @override
-  Future<GenderizeModel>? getPrediction(String name) =>
-      _getPredcitionFromUrl(name);
+  Future<GenderizeModel>? getPrediction(String name) => _getPredcitionFromUrl(name);
 }
