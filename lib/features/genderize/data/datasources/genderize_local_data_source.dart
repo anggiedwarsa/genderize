@@ -5,8 +5,9 @@ import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class GenderizeLocalDataSource {
-  Future<GenderizeModel>? getPrediction();
-  Future<void>? cacheGender(GenderizeModel genderToCache);
+  Future<GenderizeModel?> getPrediction();
+
+  Future<bool> cacheGender(GenderizeModel genderToCache);
 }
 
 const cacheGenderize = 'CACHE_GENDERIZE';
@@ -17,17 +18,19 @@ class GenderizeLocalDataSourceImpl implements GenderizeLocalDataSource {
   GenderizeLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
-  Future<GenderizeModel>? getPrediction() {
+  Future<GenderizeModel?> getPrediction() async {
     final jsonString = sharedPreferences.getString(cacheGenderize);
     if (jsonString != null) {
-      return Future.value(GenderizeModel.fromJson(json.decode(jsonString)));
+      final jsonData = json.decode(jsonString);
+      final data = GenderizeModel.fromJson(jsonData);
+      return data;
     } else {
       throw CacheException();
     }
   }
 
   @override
-  Future<void>? cacheGender(GenderizeModel genderToCache) {
+  Future<bool> cacheGender(GenderizeModel genderToCache) {
     return sharedPreferences.setString(
         cacheGenderize, json.encode(genderToCache.toJson()));
   }
