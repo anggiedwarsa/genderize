@@ -8,13 +8,13 @@ class GenderizeDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height / 5,
       child: Column(
         children: [
           Text(
             genderize.name,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 50,
               fontWeight: FontWeight.bold,
             ),
@@ -24,7 +24,7 @@ class GenderizeDisplay extends StatelessWidget {
             child: SingleChildScrollView(
               child: Text(
                 genderize.gender,
-                style: TextStyle(fontSize: 25),
+                style: const TextStyle(fontSize: 25),
                 textAlign: TextAlign.center,
               ),
             ),
