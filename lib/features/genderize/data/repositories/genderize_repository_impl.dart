@@ -1,34 +1,33 @@
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:genderize/core/error/exceptions.dart';
+import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/core/network/network_info.dart';
 import 'package:genderize/features/genderize/data/datasources/genderize_local_data_source.dart';
 import 'package:genderize/features/genderize/data/datasources/genderize_remote_data_source.dart';
-import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 import 'package:genderize/features/genderize/domain/entities/genderize.dart';
-import 'package:genderize/core/error/failures.dart';
-import 'package:dartz/dartz.dart';
 import 'package:genderize/features/genderize/domain/repositories/genderize_repository.dart';
-
-typedef Future<GenderizeModel> _GetPrediction();
 
 class GenderizeRepositoryImpl implements GenderizeRepository {
   final GenderizeLocalDataSource localDataSource;
   final GenderizeRemoteDataSource remoteDataSource;
   final NetworkInfo networkInfo;
 
-  GenderizeRepositoryImpl(
-      {required this.localDataSource,
-      required this.remoteDataSource,
-      required this.networkInfo});
+  GenderizeRepositoryImpl({
+    required this.localDataSource,
+    required this.remoteDataSource,
+    required this.networkInfo,
+  });
 
-  Future<Either<Failure, Genderize>> _getPrediction(
-      _GetPrediction getPrediction) async {
-    if (await networkInfo.isConnected) {
+  @override
+  Future<Either<Failure, Genderize>>? getPrediction(String name) async {
+    final isConnected = await networkInfo.isConnected;
+    if (isConnected) {
       try {
-        var response = await getPrediction();
-        localDataSource.cacheGender(response);
+        final response = await remoteDataSource.getPrediction(name);
+        await localDataSource.cacheGender(response);
         return Right(response);
-      } on DioError catch (error) {
+      } on DioError catch (_) {
         return Left(ServerFailure());
       } on GenderNotFoundFailure {
         return Left(GenderNotFoundFailure());
@@ -38,17 +37,14 @@ class GenderizeRepositoryImpl implements GenderizeRepository {
     } else {
       try {
         final localGender = await localDataSource.getPrediction();
-        return Right(localGender!);
+        final genderize = Genderize(
+          name: localGender?.name ?? '-',
+          gender: localGender?.gender ?? '-',
+        );
+        return Right(genderize);
       } on CacheException {
         return Left(CacheFailure());
       }
     }
-  }
-
-  @override
-  Future<Either<Failure, Genderize>> getPrediction(String name) async {
-    return await _getPrediction(() {
-      return remoteDataSource.getPrediction(name)!;
-    });
   }
 }
