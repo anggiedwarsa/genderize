@@ -7,9 +7,9 @@ import 'package:genderize/features/genderize/domain/usecases/get_prediction.dart
 part 'genderize_event.dart';
 part 'genderize_state.dart';
 
-const String SERVER_FAILURE_MESSAGE = 'Server Failure';
-const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
-const String FAILED_PREDICTION_MESSAGE =
+const String serverFailureMessage = 'Server Failure';
+const String cacheFailureMessage = 'Cache Failure';
+const String failedPredictionMessage =
     'Maaf, sistem tidak bisa memprediksi nama ini.';
 
 class GenderizeBloc extends Bloc<GenderizeEvent, GenderizeState> {
@@ -32,11 +32,11 @@ class GenderizeBloc extends Bloc<GenderizeEvent, GenderizeState> {
   String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
       case ServerFailure:
-        return SERVER_FAILURE_MESSAGE;
+        return serverFailureMessage;
       case CacheFailure:
-        return CACHE_FAILURE_MESSAGE;
+        return cacheFailureMessage;
       case GenderNotFoundFailure:
-        return FAILED_PREDICTION_MESSAGE;
+        return failedPredictionMessage;
       default:
         return 'Unexpected error';
     }
