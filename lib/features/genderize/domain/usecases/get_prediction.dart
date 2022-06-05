@@ -11,7 +11,7 @@ class GetPrediction implements UseCase<Genderize, GenderizeParams> {
   GetPrediction(this.repository);
 
   @override
-  Future<Either<Failure, Genderize>?> call(GenderizeParams params) async {
+  Future<Either<Failure, Genderize>> call(GenderizeParams params) async {
     return await repository.getPrediction(params.name);
   }
 }
