@@ -3,7 +3,7 @@ import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 
 abstract class GenderizeRemoteDataSource {
-  Future<GenderizeModel>? getPrediction(String name);
+  Future<GenderizeModel> getPrediction(String name);
 }
 
 class GenderizeRemoteDataSourceImpl implements GenderizeRemoteDataSource {
@@ -11,9 +11,15 @@ class GenderizeRemoteDataSourceImpl implements GenderizeRemoteDataSource {
 
   GenderizeRemoteDataSourceImpl({required this.dio});
 
-  Future<GenderizeModel> _getPredcitionFromUrl(String name) async {
-    final url = 'https://api.genderize.io/?name=${Uri.encodeFull(name)}';
-    final response = await dio.get(url);
+  @override
+  Future<GenderizeModel> getPrediction(String name) async {
+    const url = 'https://api.genderize.io/';
+    final response = await dio.get(
+      url,
+      queryParameters: {
+        'name': name,
+      },
+    );
 
     if (response.statusCode == 200) {
       if (response.data['gender'] == null) {
@@ -25,7 +31,4 @@ class GenderizeRemoteDataSourceImpl implements GenderizeRemoteDataSource {
       throw DioError(requestOptions: response.requestOptions);
     }
   }
-
-  @override
-  Future<GenderizeModel>? getPrediction(String name) => _getPredcitionFromUrl(name);
 }
