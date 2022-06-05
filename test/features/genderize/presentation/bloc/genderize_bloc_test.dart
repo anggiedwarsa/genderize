@@ -53,7 +53,7 @@ void main() {
       final expected = [
         GenderizeInitial(),
         GenderizeLoading(),
-        GenderizeError(message: SERVER_FAILURE_MESSAGE)
+        GenderizeError(message: serverFailureMessage)
       ];
       expectLater(genderizeBloc, emitsInOrder(expected));
 
@@ -71,7 +71,7 @@ void main() {
       final expected = [
         GenderizeInitial(),
         GenderizeLoading(),
-        GenderizeError(message: FAILED_PREDICTION_MESSAGE)
+        GenderizeError(message: failedPredictionMessage)
       ];
       expectLater(genderizeBloc, emitsInOrder(expected));
 

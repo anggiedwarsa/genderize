@@ -1,5 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/features/genderize/domain/entities/genderize.dart';
 import 'package:genderize/features/genderize/domain/usecases/get_prediction.dart';
