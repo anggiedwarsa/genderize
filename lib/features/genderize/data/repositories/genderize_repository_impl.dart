@@ -20,7 +20,7 @@ class GenderizeRepositoryImpl implements GenderizeRepository {
   });
 
   @override
-  Future<Either<Failure, Genderize>>? getPrediction(String name) async {
+  Future<Either<Failure, Genderize>> getPrediction(String name) async {
     final isConnected = await networkInfo.isConnected;
     if (isConnected) {
       try {
