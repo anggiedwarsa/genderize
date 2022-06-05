@@ -1,14 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genderize/features/genderize/domain/entities/genderize.dart';
-import 'package:genderize/features/genderize/domain/usecases/get_prediction.dart';
 import 'package:genderize/features/genderize/presentation/bloc/genderize_bloc.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'genderize_bloc_test.mocks.dart';
+import '../../../../mock_helper.mocks.dart';
 
-@GenerateMocks([GetPrediction])
 void main() {
   late GenderizeBloc genderizeBloc;
   late MockGetPrediction mockGetPrediction;

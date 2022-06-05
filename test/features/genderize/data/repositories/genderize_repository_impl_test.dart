@@ -2,26 +2,12 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genderize/core/error/exceptions.dart';
 import 'package:genderize/core/error/failures.dart';
-import 'package:genderize/core/network/network_info.dart';
-import 'package:genderize/features/genderize/data/datasources/genderize_local_data_source.dart';
-import 'package:genderize/features/genderize/data/datasources/genderize_remote_data_source.dart';
 import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 import 'package:genderize/features/genderize/data/repositories/genderize_repository_impl.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'genderize_repository_impl_test.mocks.dart';
+import '../../../../mock_helper.mocks.dart';
 
-class MockGenderizeLocalDataSource extends Mock
-    implements GenderizeLocalDataSource {}
-
-@GenerateMocks([NetworkInfo])
-@GenerateMocks([
-  GenderizeRemoteDataSource
-], customMocks: [
-  MockSpec<GenderizeRemoteDataSource>(
-      as: #MockGenderizeRemoteDataSourceForTest, returnNullOnMissingStub: true),
-])
 void main() {
   late MockNetworkInfo mockNetworkInfo;
   late MockGenderizeLocalDataSource mockGenderizeLocalDataSource;
@@ -62,8 +48,7 @@ void main() {
 
     test('periksa apakah perangkat sedang online', () async {
       // arrange
-      when(mockGenderizeRemoteDataSource.getPrediction(any))
-          .thenAnswer((_) async => genderizeModel);
+      when(mockGenderizeRemoteDataSource.getPrediction(any)).thenAnswer((_) async => genderizeModel);
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
 
       // act
@@ -74,11 +59,9 @@ void main() {
     });
 
     runTestsOnline(() {
-      test('harus mengembalikan data ketika berhasil koneksi ke server',
-          () async {
+      test('harus mengembalikan data ketika berhasil koneksi ke server', () async {
         // arrange
-        when(mockGenderizeRemoteDataSource.getPrediction(any))
-            .thenAnswer((_) async => genderizeModel);
+        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenAnswer((_) async => genderizeModel);
 
         // act
         final result = await repositoryImpl.getPrediction(name);
@@ -90,8 +73,7 @@ void main() {
 
       test('harus menyimpan data setelah menerima data dari server', () async {
         // arrange
-        when(mockGenderizeRemoteDataSource.getPrediction(any))
-            .thenAnswer((_) async => genderizeModel);
+        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenAnswer((_) async => genderizeModel);
 
         // act
         await repositoryImpl.getPrediction(name);
@@ -101,11 +83,9 @@ void main() {
         verify(mockGenderizeLocalDataSource.cacheGender(genderizeModel));
       });
 
-      test('harus return serverfailure ketika koneksi ke server berhasil',
-          () async {
+      test('harus return serverfailure ketika koneksi ke server berhasil', () async {
         //arrange
-        when(mockGenderizeRemoteDataSource.getPrediction(any))
-            .thenThrow(ServerException());
+        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenThrow(ServerException());
         //act
         final result = await repositoryImpl.getPrediction(name);
         //assert
@@ -118,8 +98,7 @@ void main() {
     runTestsOffline(() {
       test('harus return data pada sharedpreference', () async {
         //arrange
-        when(mockGenderizeLocalDataSource.getPrediction())
-            .thenAnswer((_) async => genderizeModel);
+        when(mockGenderizeLocalDataSource.getPrediction()).thenAnswer((_) async => genderizeModel);
         //act
         final result = await repositoryImpl.getPrediction(name);
         //assert
