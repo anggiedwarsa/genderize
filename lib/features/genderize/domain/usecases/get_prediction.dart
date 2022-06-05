@@ -19,8 +19,13 @@ class GetPrediction implements UseCase<Genderize, GenderizeParams> {
 class GenderizeParams extends Equatable {
   final String name;
 
-  GenderizeParams({required this.name});
+  const GenderizeParams({required this.name});
 
   @override
   List<Object?> get props => [name];
+
+  @override
+  String toString() {
+    return 'GenderizeParams{name: $name}';
+  }
 }
