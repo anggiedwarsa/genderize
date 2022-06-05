@@ -8,4 +8,9 @@ class Genderize extends Equatable {
 
   @override
   List<Object?> get props => [name, gender];
+
+  @override
+  String toString() {
+    return 'Genderize{name: $name, gender: $gender}';
+  }
 }
