@@ -39,7 +39,7 @@ void main() {
       final result = await genderizeLocalDataSourceImpl.getPrediction();
 
       // assert
-      verify(mockSharedPreferences.getString(CACHED_GENDERIZE));
+      verify(mockSharedPreferences.getString(cacheGenderize));
       expect(result, genderizeModel);
     });
   });
@@ -57,7 +57,7 @@ void main() {
       // assert
       final expectedJsonString = json.encode(genderizeModel.toJson());
       verify(mockSharedPreferences.setString(
-          CACHED_GENDERIZE, expectedJsonString));
+          cacheGenderize, expectedJsonString));
     });
   });
 }

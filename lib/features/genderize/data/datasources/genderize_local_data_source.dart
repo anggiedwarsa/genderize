@@ -9,7 +9,7 @@ abstract class GenderizeLocalDataSource {
   Future<void>? cacheGender(GenderizeModel genderToCache);
 }
 
-const CACHED_GENDERIZE = 'CACHE_GENDERIZE';
+const cacheGenderize = 'CACHE_GENDERIZE';
 
 class GenderizeLocalDataSourceImpl implements GenderizeLocalDataSource {
   final SharedPreferences sharedPreferences;
@@ -18,7 +18,7 @@ class GenderizeLocalDataSourceImpl implements GenderizeLocalDataSource {
 
   @override
   Future<GenderizeModel>? getPrediction() {
-    final jsonString = sharedPreferences.getString(CACHED_GENDERIZE);
+    final jsonString = sharedPreferences.getString(cacheGenderize);
     if (jsonString != null) {
       return Future.value(GenderizeModel.fromJson(json.decode(jsonString)));
     } else {
@@ -29,6 +29,6 @@ class GenderizeLocalDataSourceImpl implements GenderizeLocalDataSource {
   @override
   Future<void>? cacheGender(GenderizeModel genderToCache) {
     return sharedPreferences.setString(
-        CACHED_GENDERIZE, json.encode(genderToCache.toJson()));
+        cacheGenderize, json.encode(genderToCache.toJson()));
   }
 }
