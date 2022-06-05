@@ -1,9 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:genderize/core/util/constant_error_message.dart';
 
-abstract class Failure extends Equatable {
-  Failure([List properties = const <dynamic>[]]);
-}
+abstract class Failure extends Equatable {}
 
 class ServerFailure extends Failure {
   @override
