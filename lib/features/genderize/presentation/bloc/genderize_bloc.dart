@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:genderize/core/error/failures.dart';
+import 'package:genderize/core/util/string_helper.dart';
 import 'package:genderize/features/genderize/domain/entities/genderize.dart';
 import 'package:genderize/features/genderize/domain/usecases/get_prediction.dart';
 
@@ -10,14 +11,8 @@ part 'genderize_event.dart';
 
 part 'genderize_state.dart';
 
-const String serverFailureMessage = 'Server Failure';
-const String cacheFailureMessage = 'Cache Failure';
-const String failedPredictionMessage = 'Maaf, sistem tidak bisa memprediksi nama ini.';
-
 class GenderizeBloc extends Bloc<GenderizeEvent, GenderizeState> {
   final GetPrediction getPrediction;
-
-  GenderizeState get initialState => GenderizeInitial();
 
   GenderizeBloc({required this.getPrediction}) : super(GenderizeInitial()) {
     on<GetPredictionGender>(_onGetPredictionGender);
@@ -36,15 +31,21 @@ class GenderizeBloc extends Bloc<GenderizeEvent, GenderizeState> {
     emit(
       result.fold(
         (failure) {
-          var errorMessage = 'Unexpected error';
+          var errorMessage = StringHelper.unexpectedError;
           if (failure is ServerFailure) {
-            errorMessage = serverFailureMessage;
+            errorMessage = StringHelper.serverFailureMessage;
           } else if (failure is CacheFailure) {
-            errorMessage = cacheFailureMessage;
+            errorMessage = StringHelper.cacheFailureMessage;
           }
           return GenderizeError(message: errorMessage);
         },
-        (genderize) => GenderizeLoaded(genderize: genderize),
+        (genderize) {
+          if (genderize.gender == null) {
+            return const GenderizeError(message: StringHelper.failedPredictionMessage);
+          } else {
+            return GenderizeLoaded(genderize: genderize);
+          }
+        },
       ),
     );
   }
