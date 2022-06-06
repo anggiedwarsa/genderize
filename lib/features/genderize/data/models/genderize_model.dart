@@ -2,8 +2,8 @@ import 'package:genderize/features/genderize/domain/entities/genderize.dart';
 
 class GenderizeModel extends Genderize {
   const GenderizeModel({
-    required String name,
-    required String gender,
+    required String? name,
+    required String? gender,
   }) : super(name: name, gender: gender);
 
   factory GenderizeModel.fromJson(Map<String, dynamic> json) {

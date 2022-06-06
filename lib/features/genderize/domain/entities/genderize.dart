@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 
 class Genderize extends Equatable {
-  final String name;
-  final String gender;
+  final String? name;
+  final String? gender;
 
   const Genderize({required this.name, required this.gender});
 

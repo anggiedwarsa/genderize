@@ -13,7 +13,7 @@ class GenderizeDisplay extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            genderize.name,
+            genderize.name ?? '-',
             style: const TextStyle(
               fontSize: 50,
               fontWeight: FontWeight.bold,
@@ -23,7 +23,7 @@ class GenderizeDisplay extends StatelessWidget {
               child: Center(
             child: SingleChildScrollView(
               child: Text(
-                genderize.gender,
+                genderize.gender ?? '-',
                 style: const TextStyle(fontSize: 25),
                 textAlign: TextAlign.center,
               ),
