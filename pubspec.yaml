@@ -27,7 +27,6 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  bloc_test: ^8.2.0
   dartz: ^0.10.0
   dio: ^4.0.0
   equatable: ^2.0.3
@@ -48,6 +47,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.0.16
+  bloc_test: ^8.2.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

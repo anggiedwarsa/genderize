@@ -37,7 +37,7 @@ packages:
     source: hosted
     version: "7.2.1"
   bloc_test:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: bloc_test
       url: "https://pub.dartlang.org"
