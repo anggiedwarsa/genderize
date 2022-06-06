@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genderize/core/error/exceptions.dart';
 import 'package:genderize/features/genderize/data/datasources/genderize_local_data_source.dart';
 import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 import 'package:mockito/mockito.dart';
@@ -17,34 +18,63 @@ void main() {
     genderizeLocalDataSourceImpl = GenderizeLocalDataSourceImpl(sharedPreferences: mockSharedPreferences);
   });
 
-  group('dapatkan prediksi gender terakhir', () {
-    final genderizeModel = GenderizeModel.fromJson(json.decode(fixture('genderize_cache.json')));
+  group('getPrediction', () {
+    final strCacheGenderize = fixture('genderize_cache.json');
+    final jsonStringCacheGenderize = json.decode(strCacheGenderize);
+    final tGenderizeModel = GenderizeModel.fromJson(
+      jsonStringCacheGenderize,
+    );
 
-    test('periksa apakah ada data di SharedPreferences', () async {
-      // arrange
-      when(mockSharedPreferences.getString(any)).thenReturn(fixture('genderize_cache.json'));
+    test(
+      'pastikan ada data genderize dari lokal',
+      () async {
+        // arrange
+        when(mockSharedPreferences.getString(cacheGenderize)).thenReturn(strCacheGenderize);
 
-      // act
-      final result = await genderizeLocalDataSourceImpl.getPrediction();
+        // act
+        final result = await genderizeLocalDataSourceImpl.getPrediction();
 
-      // assert
-      verify(mockSharedPreferences.getString(cacheGenderize));
-      expect(result, genderizeModel);
-    });
+        // assert
+        expect(result, tGenderizeModel);
+        verify(mockSharedPreferences.getString(cacheGenderize));
+      },
+    );
+
+    test(
+      'pastikan akan menerima exception CacheException ketika tidak ada ada genderize dari lokal',
+      () async {
+        // arrange
+        when(mockSharedPreferences.getString(cacheGenderize)).thenReturn(null);
+
+        // act
+        final call = genderizeLocalDataSourceImpl.getPrediction();
+
+        // assert
+        expect(() => call, throwsA(const TypeMatcher<CacheException>()));
+      },
+    );
   });
 
-  group('simpan cache Genderize', () {
-    final genderizeModel = GenderizeModel(name: 'Rihanna', gender: 'Female');
-    test('harus berhasil menyimpan data ke sharedpreference', () async {
-      // arrange
-      when(mockSharedPreferences.setString(any, any)).thenAnswer((_) async => true);
+  group('cacheGender', () {
+    test(
+      'pastikan bisa menyimpan data GenderizeModel kedalam SharedPreferences',
+      () async {
+        // arrange
+        final tGenderizeModel = GenderizeModel.fromJson(
+          json.decode(
+            fixture('genderize_cache.json'),
+          ),
+        );
+        final jsonStringGenderizeModel = json.encode(tGenderizeModel.toJson());
+        when(mockSharedPreferences.setString(cacheGenderize, jsonStringGenderizeModel)).thenAnswer((_) async => true);
 
-      //act
-      genderizeLocalDataSourceImpl.cacheGender(genderizeModel);
+        // act
+        final result = await genderizeLocalDataSourceImpl.cacheGender(tGenderizeModel);
 
-      // assert
-      final expectedJsonString = json.encode(genderizeModel.toJson());
-      verify(mockSharedPreferences.setString(cacheGenderize, expectedJsonString));
-    });
+        // assert
+        expect(result, true);
+        verify(mockSharedPreferences.setString(cacheGenderize, jsonStringGenderizeModel));
+      },
+    );
   });
 }
