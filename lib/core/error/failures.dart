@@ -24,8 +24,3 @@ class ConnectionFailure extends Failure {
     return 'ConnectionFailure{errorMessage: $errorMessage}';
   }
 }
-
-class GenderNotFoundFailure extends Failure {
-  @override
-  List<Object?> get props => [];
-}

@@ -74,25 +74,6 @@ void main() {
     );
 
     test(
-      'pastikan kembalikan GenderNotFoundFailure ketika data gender-nya tidak tersedia dari API',
-      () async {
-        // arrange
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenThrow(
-          GenderNotFoundFailure(),
-        );
-
-        // act
-        final result = await repositoryImpl.getPrediction(name);
-
-        // assert
-        expect(result, Left(GenderNotFoundFailure()));
-        verify(mockNetworkInfo.isConnected);
-        verify(mockGenderizeRemoteDataSource.getPrediction(name));
-      },
-    );
-
-    test(
       'pastikan kembalikan data lokal ketika tidak ada koneksi internet',
       () async {
         // arrange

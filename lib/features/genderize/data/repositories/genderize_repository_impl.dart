@@ -29,8 +29,6 @@ class GenderizeRepositoryImpl implements GenderizeRepository {
         return Right(response);
       } on DioError catch (_) {
         return Left(ServerFailure());
-      } on GenderNotFoundFailure {
-        return Left(GenderNotFoundFailure());
       }
     } else {
       try {

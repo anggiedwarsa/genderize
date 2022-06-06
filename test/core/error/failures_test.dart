@@ -81,30 +81,4 @@ void main() {
       },
     );
   });
-
-  group('GenderNotFoundFailure', () {
-    final tFailure = GenderNotFoundFailure();
-
-    test(
-      'pastikan output dari nilai props',
-      () async {
-        // assert
-        expect(
-          tFailure.props,
-          [],
-        );
-      },
-    );
-
-    test(
-      'pastikan output dari fungsi toString',
-      () async {
-        // assert
-        expect(
-          tFailure.toString(),
-          'GenderNotFoundFailure()',
-        );
-      },
-    );
-  });
 }

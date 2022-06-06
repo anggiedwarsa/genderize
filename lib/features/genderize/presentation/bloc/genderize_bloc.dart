@@ -41,8 +41,6 @@ class GenderizeBloc extends Bloc<GenderizeEvent, GenderizeState> {
             errorMessage = serverFailureMessage;
           } else if (failure is CacheFailure) {
             errorMessage = cacheFailureMessage;
-          } else if (failure is GenderNotFoundFailure) {
-            errorMessage = failedPredictionMessage;
           }
           return GenderizeError(message: errorMessage);
         },
