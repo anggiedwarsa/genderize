@@ -1,9 +1,11 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genderize/core/error/exceptions.dart';
 import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 import 'package:genderize/features/genderize/data/repositories/genderize_repository_impl.dart';
+import 'package:genderize/features/genderize/domain/entities/genderize.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../../../mock_helper.mocks.dart';
@@ -24,88 +26,105 @@ void main() {
         networkInfo: mockNetworkInfo);
   });
 
-  void runTestsOnline(Function body) {
-    group('device is online', () {
-      setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      });
-      body();
-    });
-  }
-
-  void runTestsOffline(Function body) {
-    group('device is offline', () {
-      setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
-      });
-      body();
-    });
-  }
-
   group('predictGender', () {
-    final name = 'Rihanna';
-    final genderizeModel = GenderizeModel(name: name, gender: 'female');
+    const name = 'Rihanna';
+    const genderizeModel = GenderizeModel(name: name, gender: 'female');
+    final genderize = Genderize(name: genderizeModel.name, gender: genderizeModel.gender);
+    final tRequestOptions = RequestOptions(path: '');
 
-    test('periksa apakah perangkat sedang online', () async {
+    test('pastikan data dari API bisa disimpan di lokal', () async {
       // arrange
       when(mockGenderizeRemoteDataSource.getPrediction(any)).thenAnswer((_) async => genderizeModel);
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      when(mockGenderizeLocalDataSource.cacheGender(any)).thenAnswer((_) async => true);
 
       // act
-      repositoryImpl.getPrediction(name);
+      final result = await repositoryImpl.getPrediction(name);
 
       // assert
+      expect(result, const Right(genderizeModel));
       verify(mockNetworkInfo.isConnected);
+      verify(mockGenderizeRemoteDataSource.getPrediction(name));
+      verify(mockGenderizeLocalDataSource.cacheGender(genderizeModel));
     });
 
-    runTestsOnline(() {
-      test('harus mengembalikan data ketika berhasil koneksi ke server', () async {
+    test(
+      'pastikan kembalikan ServerFailure ketika respon dari API gagal',
+      () async {
         // arrange
-        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenAnswer((_) async => genderizeModel);
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenThrow(
+          DioError(
+            requestOptions: tRequestOptions,
+            error: 'testError',
+            response: Response(
+              requestOptions: tRequestOptions,
+            ),
+          ),
+        );
 
         // act
         final result = await repositoryImpl.getPrediction(name);
 
         // assert
+        expect(result, Left(ServerFailure()));
+        verify(mockNetworkInfo.isConnected);
         verify(mockGenderizeRemoteDataSource.getPrediction(name));
-        expect(result, equals(Right(genderizeModel)));
-      });
+      },
+    );
 
-      test('harus menyimpan data setelah menerima data dari server', () async {
+    test(
+      'pastikan kembalikan GenderNotFoundFailure ketika data gender-nya tidak tersedia dari API',
+      () async {
         // arrange
-        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenAnswer((_) async => genderizeModel);
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenThrow(
+          GenderNotFoundFailure(),
+        );
 
         // act
-        await repositoryImpl.getPrediction(name);
+        final result = await repositoryImpl.getPrediction(name);
 
         // assert
+        expect(result, Left(GenderNotFoundFailure()));
+        verify(mockNetworkInfo.isConnected);
         verify(mockGenderizeRemoteDataSource.getPrediction(name));
-        verify(mockGenderizeLocalDataSource.cacheGender(genderizeModel));
-      });
+      },
+    );
 
-      test('harus return serverfailure ketika koneksi ke server berhasil', () async {
-        //arrange
-        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenThrow(ServerException());
-        //act
-        final result = await repositoryImpl.getPrediction(name);
-        //assert
-        verify(mockGenderizeRemoteDataSource.getPrediction(name));
-        verifyZeroInteractions(mockGenderizeLocalDataSource);
-        expect(result, equals(Left(ServerFailure())));
-      });
-    });
-
-    runTestsOffline(() {
-      test('harus return data pada sharedpreference', () async {
-        //arrange
+    test(
+      'pastikan kembalikan data lokal ketika tidak ada koneksi internet',
+      () async {
+        // arrange
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
         when(mockGenderizeLocalDataSource.getPrediction()).thenAnswer((_) async => genderizeModel);
-        //act
+
+        // act
         final result = await repositoryImpl.getPrediction(name);
-        //assert
-        verifyZeroInteractions(mockGenderizeRemoteDataSource);
+
+        // assert
+        expect(result, Right(genderize));
         verify(mockGenderizeLocalDataSource.getPrediction());
-        expect(result, equals(Right(genderizeModel)));
-      });
-    });
+      },
+    );
+
+    test(
+      'pastikan kembalikan CacheFailure ketika tidak ada koneksi internet dan data dari lokal tidak ada',
+      () async {
+        // arrange
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+        when(mockGenderizeLocalDataSource.getPrediction()).thenThrow(
+          CacheException(),
+        );
+
+        // act
+        final result = await repositoryImpl.getPrediction(name);
+
+        // assert
+        expect(result, Left(CacheFailure()));
+        verify(mockNetworkInfo.isConnected);
+        verify(mockGenderizeLocalDataSource.getPrediction());
+      },
+    );
   });
 }
