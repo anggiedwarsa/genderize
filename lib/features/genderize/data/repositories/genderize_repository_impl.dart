@@ -31,8 +31,6 @@ class GenderizeRepositoryImpl implements GenderizeRepository {
         return Left(ServerFailure());
       } on GenderNotFoundFailure {
         return Left(GenderNotFoundFailure());
-      } on ServerException {
-        return Left(ServerFailure());
       }
     } else {
       try {
