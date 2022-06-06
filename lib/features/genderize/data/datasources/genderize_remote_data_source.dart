@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 
 abstract class GenderizeRemoteDataSource {
@@ -21,12 +20,8 @@ class GenderizeRemoteDataSourceImpl implements GenderizeRemoteDataSource {
       },
     );
 
-    if (response.statusCode == 200) {
-      if (response.data['gender'] == null) {
-        throw GenderNotFoundFailure();
-      } else {
-        return GenderizeModel.fromJson(response.data);
-      }
+    if (response.statusCode.toString().startsWith('2')) {
+      return GenderizeModel.fromJson(response.data);
     } else {
       throw DioError(requestOptions: response.requestOptions);
     }

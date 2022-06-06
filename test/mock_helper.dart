@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:genderize/core/network/network_info.dart';
 import 'package:genderize/features/genderize/data/datasources/genderize_local_data_source.dart';
 import 'package:genderize/features/genderize/data/datasources/genderize_remote_data_source.dart';
@@ -15,5 +16,6 @@ import 'package:shared_preferences/shared_preferences.dart';
   GenderizeLocalDataSource,
   GenderizeRepository,
   InternetConnectionChecker,
+  Dio,
 ])
 void main() {}
