@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:genderize/core/error/exceptions.dart';
+import 'package:genderize/core/util/shared_preferences_manager.dart';
 import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,8 +11,6 @@ abstract class GenderizeLocalDataSource {
   Future<bool> cacheGender(GenderizeModel genderToCache);
 }
 
-const cacheGenderize = 'CACHE_GENDERIZE';
-
 class GenderizeLocalDataSourceImpl implements GenderizeLocalDataSource {
   final SharedPreferences sharedPreferences;
 
@@ -19,7 +18,8 @@ class GenderizeLocalDataSourceImpl implements GenderizeLocalDataSource {
 
   @override
   Future<GenderizeModel?> getPrediction() async {
-    final jsonString = sharedPreferences.getString(cacheGenderize);
+    final jsonString =
+        sharedPreferences.getString(SharedPreferenceManager.keyCacheGenderize);
     if (jsonString != null) {
       final jsonData = json.decode(jsonString);
       final data = GenderizeModel.fromJson(jsonData);
@@ -32,6 +32,7 @@ class GenderizeLocalDataSourceImpl implements GenderizeLocalDataSource {
   @override
   Future<bool> cacheGender(GenderizeModel genderToCache) {
     return sharedPreferences.setString(
-        cacheGenderize, json.encode(genderToCache.toJson()));
+        SharedPreferenceManager.keyCacheGenderize,
+        json.encode(genderToCache.toJson()));
   }
 }

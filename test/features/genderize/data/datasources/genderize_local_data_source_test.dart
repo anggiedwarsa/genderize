@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genderize/core/error/exceptions.dart';
+import 'package:genderize/core/util/shared_preferences_manager.dart';
 import 'package:genderize/features/genderize/data/datasources/genderize_local_data_source.dart';
 import 'package:genderize/features/genderize/data/models/genderize_model.dart';
 import 'package:mockito/mockito.dart';
@@ -15,7 +16,8 @@ void main() {
 
   setUp(() {
     mockSharedPreferences = MockSharedPreferences();
-    genderizeLocalDataSourceImpl = GenderizeLocalDataSourceImpl(sharedPreferences: mockSharedPreferences);
+    genderizeLocalDataSourceImpl =
+        GenderizeLocalDataSourceImpl(sharedPreferences: mockSharedPreferences);
   });
 
   group('getPrediction', () {
@@ -29,14 +31,17 @@ void main() {
       'pastikan ada data genderize dari lokal',
       () async {
         // arrange
-        when(mockSharedPreferences.getString(cacheGenderize)).thenReturn(strCacheGenderize);
+        when(mockSharedPreferences
+                .getString(SharedPreferenceManager.keyCacheGenderize))
+            .thenReturn(strCacheGenderize);
 
         // act
         final result = await genderizeLocalDataSourceImpl.getPrediction();
 
         // assert
         expect(result, tGenderizeModel);
-        verify(mockSharedPreferences.getString(cacheGenderize));
+        verify(mockSharedPreferences
+            .getString(SharedPreferenceManager.keyCacheGenderize));
       },
     );
 
@@ -44,7 +49,9 @@ void main() {
       'pastikan akan menerima exception CacheException ketika tidak ada ada genderize dari lokal',
       () async {
         // arrange
-        when(mockSharedPreferences.getString(cacheGenderize)).thenReturn(null);
+        when(mockSharedPreferences
+                .getString(SharedPreferenceManager.keyCacheGenderize))
+            .thenReturn(null);
 
         // act
         final call = genderizeLocalDataSourceImpl.getPrediction();
@@ -66,14 +73,20 @@ void main() {
           ),
         );
         final jsonStringGenderizeModel = json.encode(tGenderizeModel.toJson());
-        when(mockSharedPreferences.setString(cacheGenderize, jsonStringGenderizeModel)).thenAnswer((_) async => true);
+        when(mockSharedPreferences.setString(
+                SharedPreferenceManager.keyCacheGenderize,
+                jsonStringGenderizeModel))
+            .thenAnswer((_) async => true);
 
         // act
-        final result = await genderizeLocalDataSourceImpl.cacheGender(tGenderizeModel);
+        final result =
+            await genderizeLocalDataSourceImpl.cacheGender(tGenderizeModel);
 
         // assert
         expect(result, true);
-        verify(mockSharedPreferences.setString(cacheGenderize, jsonStringGenderizeModel));
+        verify(mockSharedPreferences.setString(
+            SharedPreferenceManager.keyCacheGenderize,
+            jsonStringGenderizeModel));
       },
     );
   });
