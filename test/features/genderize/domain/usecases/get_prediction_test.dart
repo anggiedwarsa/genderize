@@ -1,38 +1,64 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genderize/features/genderize/domain/entities/genderize.dart';
-import 'package:genderize/features/genderize/domain/repositories/genderize_repository.dart';
 import 'package:genderize/features/genderize/domain/usecases/get_prediction.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'get_prediction_test.mocks.dart';
+import '../../../../mock_helper.mocks.dart';
 
-@GenerateMocks([GenderizeRepository])
 void main() {
   late MockGenderizeRepository mockGenderizeRepository;
   late GetPrediction usecase;
-  late String name;
-  late Genderize genderize;
 
   setUp(() {
     mockGenderizeRepository = MockGenderizeRepository();
     usecase = GetPrediction(mockGenderizeRepository);
-    name = "Rihanna";
-    genderize = Genderize(name: name, gender: 'female');
   });
 
-  test('harus menerima prediksi gender untuk nama dari repo', () async {
-    // arrange
-    when(mockGenderizeRepository.getPrediction(name))
-        .thenAnswer((_) async => Right(genderize));
+  const tName = 'Rihanna';
+  const tGenderize = Genderize(
+    name: tName,
+    gender: 'female',
+  );
+  const tParams = GenderizeParams(name: tName);
 
-    // act
-    final result = await usecase(GenderizeParams(name: name));
+  test(
+    'pastikan objek repository berhasil menerima respon dari endpoint getPrediction atau lokal',
+    () async {
+      // arrange
+      when(mockGenderizeRepository.getPrediction(tName)).thenAnswer((_) async => const Right(tGenderize));
 
-    // assert
-    expect(result, equals(Right(genderize)));
-    verify(mockGenderizeRepository.getPrediction(name));
-    verifyNoMoreInteractions(mockGenderizeRepository);
-  });
+      // act
+      final result = await usecase(tParams);
+
+      // assert
+      expect(result, const Right(tGenderize));
+      verify(mockGenderizeRepository.getPrediction(tName));
+      verifyNoMoreInteractions(mockGenderizeRepository);
+    },
+  );
+
+  test(
+    'pastikan output dari nilai props class GenderizeParams',
+    () async {
+      // assert
+      expect(
+        tParams.props,
+        [
+          tParams.name,
+        ],
+      );
+    },
+  );
+
+  test(
+    'pastikan output dari fungsi toString',
+    () async {
+      // assert
+      expect(
+        tParams.toString(),
+        'GenderizeParams{name: ${tParams.name}}',
+      );
+    },
+  );
 }

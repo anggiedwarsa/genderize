@@ -1,14 +1,15 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genderize/core/error/failures.dart';
+import 'package:genderize/core/util/string_helper.dart';
 import 'package:genderize/features/genderize/domain/entities/genderize.dart';
 import 'package:genderize/features/genderize/domain/usecases/get_prediction.dart';
 import 'package:genderize/features/genderize/presentation/bloc/genderize_bloc.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'genderize_bloc_test.mocks.dart';
+import '../../../../mock_helper.mocks.dart';
 
-@GenerateMocks([GetPrediction])
 void main() {
   late GenderizeBloc genderizeBloc;
   late MockGetPrediction mockGetPrediction;
@@ -18,65 +19,78 @@ void main() {
     genderizeBloc = GenderizeBloc(getPrediction: mockGetPrediction);
   });
 
-  test('initialState harus GenderizeInitial', () async {
-    // assert
-    expect(genderizeBloc.initialState, equals(GenderizeInitial()));
-  });
+  test(
+    'pastikan output dari nilai initialState',
+    () async {
+      // assert
+      expect(genderizeBloc.state, GenderizeInitial());
+    },
+  );
 
   group('getPrediction', () {
-    final genderize = Genderize(name: 'Rihanna', gender: 'female');
-    test(
-        'harus emit [GenderizeLoading, GenderizeLoaded] ketika data berhasil diterima',
-        () async* {
-      // arrange
-      when(mockGetPrediction(any)).thenAnswer((_) async => Right(genderize));
+    const tName = 'Rihanna';
+    const genderize = Genderize(
+      name: tName,
+      gender: 'female',
+    );
+    const tEvent = GetPredictionGender(tName);
+    const tParams = GenderizeParams(name: tName);
 
-      // assert later
-      final expected = [
-        GenderizeInitial(),
+    blocTest(
+      'pastikan emit [GenderizeLoading, GenderizeLoaded] ketika terima event '
+      'GetPredictionGender dengan proses berhasil',
+      build: () {
+        when(mockGetPrediction(any)).thenAnswer((_) async => const Right(genderize));
+        return genderizeBloc;
+      },
+      act: (GenderizeBloc bloc) {
+        return bloc.add(tEvent);
+      },
+      expect: () => [
         GenderizeLoading(),
-        GenderizeLoaded(genderize: genderize)
-      ];
-      expectLater(genderizeBloc, emitsInOrder(expected));
+        const GenderizeLoaded(genderize: genderize),
+      ],
+      verify: (_) async {
+        verify(mockGetPrediction(tParams));
+      },
+    );
 
-      // act
-      genderizeBloc.add(GetPredictionGender(genderize.name));
-    });
-
-    test(
-        'harus emit [GenderizeLoading, GenderizeError] ketika data gagal mendapatkan data',
-        () async* {
-      // arrange
-      when(mockGetPrediction(any)).thenAnswer((_) async => Right(genderize));
-
-      // assert later
-      final expected = [
-        GenderizeInitial(),
+    blocTest(
+      'pastikan emit [GenderizeLoading, GenderizeError] ketika terima event '
+      'GetPredictionGender dengan proses gagal dari API',
+      build: () {
+        when(mockGetPrediction(any)).thenAnswer((_) async => Left(ServerFailure()));
+        return genderizeBloc;
+      },
+      act: (GenderizeBloc bloc) {
+        return bloc.add(tEvent);
+      },
+      expect: () => [
         GenderizeLoading(),
-        GenderizeError(message: SERVER_FAILURE_MESSAGE)
-      ];
-      expectLater(genderizeBloc, emitsInOrder(expected));
+        const GenderizeError(message: StringHelper.serverFailureMessage),
+      ],
+      verify: (_) async {
+        verify(mockGetPrediction(tParams));
+      },
+    );
 
-      // act
-      genderizeBloc.add(GetPredictionGender(genderize.name));
-    });
-
-    test(
-        'harus emit [GenderizeLoading, GenderizeError] ketika prediksi adalah null',
-        () async* {
-      // arrange
-      when(mockGetPrediction(any)).thenAnswer((_) async => Right(genderize));
-
-      // assert later
-      final expected = [
-        GenderizeInitial(),
+    blocTest(
+      'pastikan emit [GenderizeLoading, GenderizeError] ketika terima event '
+      'GetPredictionGender dengan proses gagal ambil dari lokal',
+      build: () {
+        when(mockGetPrediction(any)).thenAnswer((_) async => Left(CacheFailure()));
+        return genderizeBloc;
+      },
+      act: (GenderizeBloc bloc) {
+        return bloc.add(tEvent);
+      },
+      expect: () => [
         GenderizeLoading(),
-        GenderizeError(message: FAILED_PREDICTION_MESSAGE)
-      ];
-      expectLater(genderizeBloc, emitsInOrder(expected));
-
-      // act
-      genderizeBloc.add(GetPredictionGender(genderize.name));
-    });
+        const GenderizeError(message: StringHelper.cacheFailureMessage),
+      ],
+      verify: (_) async {
+        verify(mockGetPrediction(tParams));
+      },
+    );
   });
 }

@@ -20,7 +20,7 @@ class _GenderizeControlsState extends State<GenderizeControls> {
         TextField(
           controller: controller,
           keyboardType: TextInputType.name,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: OutlineInputBorder(),
             hintText: 'Masukkan nama',
           ),

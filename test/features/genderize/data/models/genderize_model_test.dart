@@ -7,44 +7,51 @@ import 'package:genderize/features/genderize/domain/entities/genderize.dart';
 import '../../../../fixtures/fixture_reader.dart';
 
 void main() {
-  final genderizeModel = GenderizeModel(name: 'Rihanna', gender: 'female');
+  const genderizeModel = GenderizeModel(
+    name: 'Rihanna',
+    gender: 'female',
+  );
 
-  test('pastikan apakah subclass dari Genderize entity', () async {
-    // arrange
-
-    // act
-
-    // assert
-    expect(genderizeModel, isA<Genderize>());
-  });
+  test(
+    'pastikan apakah subclass dari Genderize entity',
+    () async {
+      // assert
+      expect(genderizeModel, isA<Genderize>());
+    },
+  );
 
   group('test fungsi fromJson', () {
-    test('harus mengembalikan value dengan tipe model Genderize', () async {
-      // arrange
-      final Map<String, dynamic> jsonMap =
-          json.decode(fixture('genderize.json'));
+    test(
+      'harus mengembalikan value dengan tipe model Genderize',
+      () async {
+        // arrange
+        final Map<String, dynamic> jsonMap = json.decode(fixture('genderize.json'));
 
-      // act
-      final result = GenderizeModel.fromJson(jsonMap);
+        // act
+        final result = GenderizeModel.fromJson(jsonMap);
 
-      // assert
-      expect(result, equals(genderizeModel));
-    });
+        // assert
+        expect(result, genderizeModel);
+      },
+    );
   });
 
   group('test fungsi toJson', () {
-    test('harus mengembalikan data yang sama', () async {
-      // arrange
-      final expectedMap = {
-        "name": "Rihanna",
-        "gender": "female",
-      };
+    test(
+      'harus mengembalikan data yang sama',
+      () async {
+        // arrange
+        final expectedMap = {
+          "name": "Rihanna",
+          "gender": "female",
+        };
 
-      // act
-      final result = genderizeModel.toJson();
+        // act
+        final result = genderizeModel.toJson();
 
-      // assert
-      expect(result, equals(expectedMap));
-    });
+        // assert
+        expect(result, expectedMap);
+      },
+    );
   });
 }

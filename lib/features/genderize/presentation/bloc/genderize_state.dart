@@ -14,11 +14,27 @@ class GenderizeLoading extends GenderizeState {}
 class GenderizeLoaded extends GenderizeState {
   final Genderize genderize;
 
-  GenderizeLoaded({required this.genderize});
+  const GenderizeLoaded({required this.genderize});
+
+  @override
+  List<Object> get props => [genderize];
+
+  @override
+  String toString() {
+    return 'GenderizeLoaded{genderize: $genderize}';
+  }
 }
 
 class GenderizeError extends GenderizeState {
   final String message;
 
-  GenderizeError({required this.message});
+  const GenderizeError({required this.message});
+
+  @override
+  List<Object> get props => [message];
+
+  @override
+  String toString() {
+    return 'GenderizeError{message: $message}';
+  }
 }

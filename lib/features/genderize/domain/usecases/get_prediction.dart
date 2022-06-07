@@ -11,7 +11,7 @@ class GetPrediction implements UseCase<Genderize, GenderizeParams> {
   GetPrediction(this.repository);
 
   @override
-  Future<Either<Failure, Genderize>?> call(GenderizeParams params) async {
+  Future<Either<Failure, Genderize>> call(GenderizeParams params) async {
     return await repository.getPrediction(params.name);
   }
 }
@@ -19,9 +19,13 @@ class GetPrediction implements UseCase<Genderize, GenderizeParams> {
 class GenderizeParams extends Equatable {
   final String name;
 
-  GenderizeParams({required this.name});
+  const GenderizeParams({required this.name});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [name];
+
+  @override
+  String toString() {
+    return 'GenderizeParams{name: $name}';
+  }
 }

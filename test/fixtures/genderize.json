@@ -1,1 +1,6 @@
-{"name":"Rihanna","gender":"female","probability":0.97,"count":743}
+{
+  "name": "Rihanna",
+  "gender": "female",
+  "probability": 0.97,
+  "count": 743
+}

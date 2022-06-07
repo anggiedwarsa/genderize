@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:genderize/features/genderize/presentation/bloc/genderize_bloc.dart';
@@ -15,7 +14,7 @@ class GenderizePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Genderize'),
+        title: const Text('Genderize'),
       ),
       body: SingleChildScrollView(
         child: buildBody(context),
@@ -31,27 +30,32 @@ class GenderizePage extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               BlocBuilder<GenderizeBloc, GenderizeState>(
                 builder: (context, state) {
                   if (state is GenderizeInitial) {
-                    return MessageDisplay(
-                        message: 'Ketikkan nama untuk prediksi gender');
+                    return const MessageDisplay(
+                      message: 'Ketikkan nama untuk prediksi gender',
+                    );
                   } else if (state is GenderizeLoading) {
-                    return LoadingWidget();
+                    return const LoadingWidget();
                   } else if (state is GenderizeLoaded) {
-                    return GenderizeDisplay(genderize: state.genderize);
+                    return GenderizeDisplay(
+                      genderize: state.genderize,
+                    );
                   } else if (state is GenderizeError) {
-                    return MessageDisplay(message: state.message);
+                    return MessageDisplay(
+                      message: state.message,
+                    );
                   }
-                  return Container(
+                  return SizedBox(
                     height: MediaQuery.of(context).size.height / 3,
-                    child: Placeholder(),
+                    child: const Placeholder(),
                   );
                 },
               ),
-              SizedBox(height: 10),
-              GenderizeControls(),
+              const SizedBox(height: 10),
+              const GenderizeControls(),
             ],
           ),
         ),
