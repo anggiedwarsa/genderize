@@ -44,7 +44,7 @@ class Country extends Equatable {
   factory Country.fromJson(Map<String, dynamic> json) {
     return Country(
       countryId: json['country_id'],
-      probability: json['probability'],
+      probability: double.parse(json['probability'].toString()),
     );
   }
 
