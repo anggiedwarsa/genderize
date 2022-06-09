@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:genderize/core/util/country_name.dart';
 import 'package:genderize/features/domain/entities/nationalize/nationalize.dart';
 
 class NationalizeDisplay extends StatelessWidget {
@@ -29,11 +30,11 @@ class NationalizeDisplay extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Country ID: ${nationalize.countries?[index].countryId}',
+                      'Negara : ${CountrName.countyNames['${nationalize.countries?[index].countryId}']}',
                       textAlign: TextAlign.left,
                     ),
                     Text(
-                      'Probability: ${nationalize.countries?[index].probability.toString()}',
+                      'Kemungkinan: ${(nationalize.countries![index].probability * 100).toStringAsFixed(1)}%',
                       textAlign: TextAlign.left,
                     ),
                     const SizedBox(height: 10),
