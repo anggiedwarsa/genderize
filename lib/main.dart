@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:genderize/features/genderize/presentation/pages/genderize_page.dart';
+import 'package:genderize/features/presentation/pages/dashboard/dashboard_page.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const GenderizePage(),
+      home: const Dashboard(),
     );
   }
 }
