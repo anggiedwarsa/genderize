@@ -7,7 +7,7 @@ part 'nationalize_model.g.dart';
 class NationalizeModel extends Equatable {
   @JsonKey(name: 'name')
   final String? name;
-  @JsonKey(name: 'countries')
+  @JsonKey(name: 'country')
   final List<Country>? countries;
 
   const NationalizeModel({
