@@ -12,7 +12,7 @@ class GenderizeInitial extends GenderizeState {}
 class GenderizeLoading extends GenderizeState {}
 
 class GenderizeLoaded extends GenderizeState {
-  final Genderize genderize;
+  final GenderizeModel genderize;
 
   const GenderizeLoaded({required this.genderize});
 

@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genderize/features/domain/entities/genderize/genderize.dart';
+import 'package:genderize/features/data/models/genderize/genderize_model.dart';
 import 'package:genderize/features/presentation/bloc/genderize/genderize_bloc.dart';
+
+import '../../../../../fixtures/fixture_reader.dart';
 
 void main() {
   group('GenderizeInitial', () {
@@ -56,11 +60,12 @@ void main() {
   });
 
   group('GenderizeLoaded', () {
-    const tGenderize = Genderize(
-      name: 'testName',
-      gender: 'testGender',
+    final tGenderize = GenderizeModel.fromJson(
+      json.decode(
+        fixture('genderize.json'),
+      ),
     );
-    const tState = GenderizeLoaded(
+    final tState = GenderizeLoaded(
       genderize: tGenderize,
     );
 
