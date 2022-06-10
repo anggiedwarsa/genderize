@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genderize/features/domain/entities/nationalize/nationalize.dart';
+import 'package:genderize/features/data/models/nationalize/nationalize_model.dart';
 import 'package:genderize/features/presentation/bloc/nationalize/nationalize_bloc.dart';
+
+import '../../../../../fixtures/fixture_reader.dart';
 
 void main() {
   group('nationalizeInitial', () {
@@ -56,17 +60,12 @@ void main() {
   });
 
   group('NationalizeLoaded', () {
-    const tCountries = <Country>[
-      Country(
-        countryId: 'ID',
-        probability: 0.9999999999999999,
+    final tNationalize = NationalizeModel.fromJson(
+      json.decode(
+        fixture('nationalize.json'),
       ),
-    ];
-    const tNationalize = Nationalize(
-      name: 'Anggi',
-      countries: tCountries,
     );
-    const tState = NationalizeLoaded(
+    final tState = NationalizeLoaded(
       nationalize: tNationalize,
     );
 

@@ -12,7 +12,7 @@ class NationalizeInitial extends NationalizeState {}
 class NationalizeLoading extends NationalizeState {}
 
 class NationalizeLoaded extends NationalizeState {
-  final Nationalize nationalize;
+  final NationalizeModel nationalize;
 
   const NationalizeLoaded({required this.nationalize});
 
