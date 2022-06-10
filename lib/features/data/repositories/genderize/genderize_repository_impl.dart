@@ -5,7 +5,7 @@ import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/core/network/network_info.dart';
 import 'package:genderize/features/data/datasources/genderize/genderize_local_data_source.dart';
 import 'package:genderize/features/data/datasources/genderize/genderize_remote_data_source.dart';
-import 'package:genderize/features/domain/entities/genderize/genderize.dart';
+import 'package:genderize/features/data/models/genderize/genderize_model.dart';
 import 'package:genderize/features/domain/repositories/genderize/genderize_repository.dart';
 
 class GenderizeRepositoryImpl implements GenderizeRepository {
@@ -20,7 +20,7 @@ class GenderizeRepositoryImpl implements GenderizeRepository {
   });
 
   @override
-  Future<Either<Failure, Genderize>> getPrediction(String name) async {
+  Future<Either<Failure, GenderizeModel>> getPrediction(String name) async {
     final isConnected = await networkInfo.isConnected;
     if (isConnected) {
       try {
@@ -33,7 +33,7 @@ class GenderizeRepositoryImpl implements GenderizeRepository {
     } else {
       try {
         final localGender = await localDataSource.getPrediction();
-        final genderize = Genderize(
+        final genderize = GenderizeModel(
           name: localGender?.name ?? '-',
           gender: localGender?.gender ?? '-',
         );
