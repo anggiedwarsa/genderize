@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/core/util/string_helper.dart';
-import 'package:genderize/features/domain/entities/genderize/genderize.dart';
+import 'package:genderize/features/data/models/genderize/genderize_model.dart';
 import 'package:genderize/features/domain/usecases/genderize/get_prediction.dart';
 
 part 'genderize_event.dart';

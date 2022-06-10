@@ -1,13 +1,16 @@
+import 'dart:convert';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/core/util/string_helper.dart';
-import 'package:genderize/features/domain/entities/genderize/genderize.dart';
+import 'package:genderize/features/data/models/genderize/genderize_model.dart';
 import 'package:genderize/features/domain/usecases/genderize/get_prediction.dart';
 import 'package:genderize/features/presentation/bloc/genderize/genderize_bloc.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../../fixtures/fixture_reader.dart';
 import '../../../../../mock_helper.mocks.dart';
 
 void main() {
@@ -28,20 +31,21 @@ void main() {
   );
 
   group('getPrediction', () {
-    const tName = 'Rihanna';
-    const genderize = Genderize(
-      name: tName,
-      gender: 'female',
+    final genderize = GenderizeModel.fromJson(
+      json.decode(
+        fixture('genderize.json'),
+      ),
     );
-    const tEvent = GetPredictionGender(tName);
-    const tParams = GenderizeParams(name: tName);
+    final tName = genderize.name!;
+    final tEvent = GetPredictionGender(tName);
+    final tParams = GenderizeParams(name: tName);
 
     blocTest(
       'pastikan emit [GenderizeLoading, GenderizeLoaded] ketika terima event '
       'GetPredictionGender dengan proses berhasil',
       build: () {
         when(mockGetPrediction(any))
-            .thenAnswer((_) async => const Right(genderize));
+            .thenAnswer((_) async => Right(genderize));
         return genderizeBloc;
       },
       act: (GenderizeBloc bloc) {
@@ -49,7 +53,7 @@ void main() {
       },
       expect: () => [
         GenderizeLoading(),
-        const GenderizeLoaded(genderize: genderize),
+        GenderizeLoaded(genderize: genderize),
       ],
       verify: (_) async {
         verify(mockGetPrediction(tParams));
