@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/core/util/string_helper.dart';
-import 'package:genderize/features/domain/entities/nationalize/nationalize.dart';
+import 'package:genderize/features/data/models/nationalize/nationalize_model.dart';
 import 'package:genderize/features/domain/usecases/nationalize/get_prediction_country.dart';
 
 part 'nationalize_event.dart';

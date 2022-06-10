@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,9 +7,9 @@ import 'package:genderize/core/error/exceptions.dart';
 import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/features/data/models/nationalize/nationalize_model.dart';
 import 'package:genderize/features/data/repositories/nationalize/nationalize_repository_impl.dart';
-import 'package:genderize/features/domain/entities/nationalize/nationalize.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../../fixtures/fixture_reader.dart';
 import '../../../../../mock_helper.mocks.dart';
 
 void main() {
@@ -29,42 +31,38 @@ void main() {
 
   group('predictCountry', () {
     const name = 'Anggi';
-    const countries = <Country>[
-      Country(
-        countryId: 'ID',
-        probability: 0.9999999999999999,
+    final nationalizeModel = NationalizeModel.fromJson(
+      json.decode(
+        fixture('nationalize.json'),
       ),
-    ];
-    const nationalizeModel = NationalizeModel(name: name, countries: countries);
-    final tNationalize = Nationalize(
-        name: nationalizeModel.name, countries: nationalizeModel.countries);
+    );
     final tRequestOptions = RequestOptions(path: '');
 
-    test('pastikan data dari API bisa disimpan di lokal', () async {
-      // arrange
-      when(mockNationalizeRemoteDataSource.getPredictionCountry(any))
-          .thenAnswer((_) async => nationalizeModel);
-      when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(mockNationalizeLocalDataSource.cacheCountry(any))
-          .thenAnswer((_) async => true);
+    test(
+      'pastikan data dari API bisa disimpan di lokal',
+      () async {
+        // arrange
+        when(mockNationalizeRemoteDataSource.getPredictionCountry(any)).thenAnswer((_) async => nationalizeModel);
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+        when(mockNationalizeLocalDataSource.cacheCountry(any)).thenAnswer((_) async => true);
 
-      // act
-      final result = await repositoryImpl.getPredictionCountry(name);
+        // act
+        final result = await repositoryImpl.getPredictionCountry(name);
 
-      // assert
-      expect(result, const Right(nationalizeModel));
-      verify(mockNetworkInfo.isConnected);
-      verify(mockNationalizeRemoteDataSource.getPredictionCountry(name));
-      verify(mockNationalizeLocalDataSource.cacheCountry(nationalizeModel));
-    });
+        // assert
+        expect(result, Right(nationalizeModel));
+        verify(mockNetworkInfo.isConnected);
+        verify(mockNationalizeRemoteDataSource.getPredictionCountry(name));
+        verify(mockNationalizeLocalDataSource.cacheCountry(nationalizeModel));
+      },
+    );
 
     test(
       'pastikan kembalikan ServerFailure ketika respon dari API gagal',
       () async {
         // arrange
         when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-        when(mockNationalizeRemoteDataSource.getPredictionCountry(any))
-            .thenThrow(
+        when(mockNationalizeRemoteDataSource.getPredictionCountry(any)).thenThrow(
           DioError(
             requestOptions: tRequestOptions,
             error: 'testError',
@@ -89,14 +87,13 @@ void main() {
       () async {
         // arrange
         when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
-        when(mockNationalizeLocalDataSource.getPredictionCountry())
-            .thenAnswer((_) async => nationalizeModel);
+        when(mockNationalizeLocalDataSource.getPredictionCountry()).thenAnswer((_) async => nationalizeModel);
 
         // act
         final result = await repositoryImpl.getPredictionCountry(name);
 
         // assert
-        expect(result, Right(tNationalize));
+        expect(result, Right(nationalizeModel));
         verify(mockNationalizeLocalDataSource.getPredictionCountry());
       },
     );

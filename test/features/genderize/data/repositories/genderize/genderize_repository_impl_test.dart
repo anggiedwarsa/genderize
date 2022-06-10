@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,9 +7,9 @@ import 'package:genderize/core/error/exceptions.dart';
 import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/features/data/models/genderize/genderize_model.dart';
 import 'package:genderize/features/data/repositories/genderize/genderize_repository_impl.dart';
-import 'package:genderize/features/domain/entities/genderize/genderize.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../../fixtures/fixture_reader.dart';
 import '../../../../../mock_helper.mocks.dart';
 
 void main() {
@@ -28,28 +30,31 @@ void main() {
 
   group('predictGender', () {
     const name = 'Rihanna';
-    const genderizeModel = GenderizeModel(name: name, gender: 'female');
-    final genderize =
-        Genderize(name: genderizeModel.name, gender: genderizeModel.gender);
+    final genderizeModel = GenderizeModel.fromJson(
+      json.decode(
+        fixture('genderize.json'),
+      ),
+    );
     final tRequestOptions = RequestOptions(path: '');
 
-    test('pastikan data dari API bisa disimpan di lokal', () async {
-      // arrange
-      when(mockGenderizeRemoteDataSource.getPrediction(any))
-          .thenAnswer((_) async => genderizeModel);
-      when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(mockGenderizeLocalDataSource.cacheGender(any))
-          .thenAnswer((_) async => true);
+    test(
+      'pastikan data dari API bisa disimpan di lokal',
+      () async {
+        // arrange
+        when(mockGenderizeRemoteDataSource.getPrediction(any)).thenAnswer((_) async => genderizeModel);
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+        when(mockGenderizeLocalDataSource.cacheGender(any)).thenAnswer((_) async => true);
 
-      // act
-      final result = await repositoryImpl.getPrediction(name);
+        // act
+        final result = await repositoryImpl.getPrediction(name);
 
-      // assert
-      expect(result, const Right(genderizeModel));
-      verify(mockNetworkInfo.isConnected);
-      verify(mockGenderizeRemoteDataSource.getPrediction(name));
-      verify(mockGenderizeLocalDataSource.cacheGender(genderizeModel));
-    });
+        // assert
+        expect(result, Right(genderizeModel));
+        verify(mockNetworkInfo.isConnected);
+        verify(mockGenderizeRemoteDataSource.getPrediction(name));
+        verify(mockGenderizeLocalDataSource.cacheGender(genderizeModel));
+      },
+    );
 
     test(
       'pastikan kembalikan ServerFailure ketika respon dari API gagal',
@@ -81,14 +86,13 @@ void main() {
       () async {
         // arrange
         when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
-        when(mockGenderizeLocalDataSource.getPrediction())
-            .thenAnswer((_) async => genderizeModel);
+        when(mockGenderizeLocalDataSource.getPrediction()).thenAnswer((_) async => genderizeModel);
 
         // act
         final result = await repositoryImpl.getPrediction(name);
 
         // assert
-        expect(result, Right(genderize));
+        expect(result, Right(genderizeModel));
         verify(mockGenderizeLocalDataSource.getPrediction());
       },
     );

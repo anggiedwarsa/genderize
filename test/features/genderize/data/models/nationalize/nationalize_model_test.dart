@@ -2,66 +2,75 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genderize/features/data/models/nationalize/nationalize_model.dart';
-import 'package:genderize/features/domain/entities/nationalize/nationalize.dart';
 
 import '../../../../../fixtures/fixture_reader.dart';
 
 void main() {
-  const name = 'Anggi';
-  const countries = <Country>[
-    Country(
-      countryId: 'ID',
-      probability: 0.9999999999999999,
+  final nationalizeModel = NationalizeModel.fromJson(
+    json.decode(
+      fixture('nationalize.json'),
     ),
-  ];
-  const nationalizeModel = NationalizeModel(name: name, countries: countries);
+  );
 
   test(
-    'pastikan apakah subclass dari Genderize entity',
+    'pastikan fungsi fromJson bisa mmengembalikan class model NationalizeModel',
     () async {
+      // arrange
+      final jsonMap = json.decode(fixture('nationalize.json'));
+
+      // act
+      final actualModel = NationalizeModel.fromJson(jsonMap);
+
       // assert
-      expect(nationalizeModel, isA<Nationalize>());
+      expect(actualModel, nationalizeModel);
     },
   );
 
-  group('test fungsi fromJson', () {
-    test(
-      'harus mengembalikan value dengan tipe model Nationalize',
-      () async {
-        // arrange
-        final Map<String, dynamic> jsonMap =
-            json.decode(fixture('nationalize.json'));
+  test(
+    'pastikan fungsi toJson bisa mengembalikan objek Map',
+    () async {
+      // arrange
+      final model = NationalizeModel.fromJson(
+        json.decode(
+          fixture('nationalize.json'),
+        ),
+      );
 
-        // act
-        final result = NationalizeModel.fromJson(jsonMap);
+      // act
+      final actualMap = json.encode(model.toJson());
 
-        // assert
-        expect(result, nationalizeModel);
-      },
-    );
-  });
+      // assert
+      expect(
+        actualMap,
+        json.encode(
+          nationalizeModel.toJson(),
+        ),
+      );
+    },
+  );
 
-  group('test fungsi toJson', () {
-    test(
-      'harus mengembalikan data yang sama',
-      () async {
-        // arrange
-        final expectedMap = {
-          "name": "Anggi",
-          "country": [
-            {
-              "country_id": "ID",
-              "probability": 0.9999999999999999,
-            }
-          ]
-        };
+  test(
+    'pastikan output dari nilai props',
+    () async {
+      // assert
+      expect(
+        nationalizeModel.props,
+        [
+          nationalizeModel.name,
+          nationalizeModel.countries,
+        ],
+      );
+    },
+  );
 
-        // act
-        final result = nationalizeModel.toJson();
-
-        // assert
-        expect(result, expectedMap);
-      },
-    );
-  });
+  test(
+    'pastikan output dari fungsi toString',
+    () async {
+      // assert
+      expect(
+        nationalizeModel.toString(),
+        'NationalizeModel{name: ${nationalizeModel.name}, countries: ${nationalizeModel.countries}}',
+      );
+    },
+  );
 }

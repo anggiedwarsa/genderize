@@ -5,7 +5,7 @@ import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/core/network/network_info.dart';
 import 'package:genderize/features/data/datasources/nationalize/nationalize_local_data_source.dart';
 import 'package:genderize/features/data/datasources/nationalize/nationalize_remote_data_source.dart';
-import 'package:genderize/features/domain/entities/nationalize/nationalize.dart';
+import 'package:genderize/features/data/models/nationalize/nationalize_model.dart';
 import 'package:genderize/features/domain/repositories/nationalize/nationalize_repository.dart';
 
 class NationalizeRepositoryImpl implements NationalizeRepository {
@@ -20,7 +20,7 @@ class NationalizeRepositoryImpl implements NationalizeRepository {
   });
 
   @override
-  Future<Either<Failure, Nationalize>> getPredictionCountry(String name) async {
+  Future<Either<Failure, NationalizeModel>> getPredictionCountry(String name) async {
     final isConnected = await networkInfo.isConnected;
     if (isConnected) {
       try {
@@ -33,7 +33,7 @@ class NationalizeRepositoryImpl implements NationalizeRepository {
     } else {
       try {
         final localCountry = await localDataSource.getPredictionCountry();
-        final nationalize = Nationalize(
+        final nationalize = NationalizeModel(
           name: localCountry!.name,
           countries: localCountry.countries,
         );

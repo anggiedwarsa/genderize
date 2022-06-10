@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genderize/features/domain/entities/nationalize/nationalize.dart';
+import 'package:genderize/features/data/models/nationalize/nationalize_model.dart';
 import 'package:genderize/features/domain/usecases/nationalize/get_prediction_country.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../../fixtures/fixture_reader.dart';
 import '../../../../../mock_helper.mocks.dart';
 
 void main() {
@@ -16,13 +19,11 @@ void main() {
   });
 
   const tName = 'Anggi';
-  const tCountries = <Country>[
-    Country(
-      countryId: 'ID',
-      probability: 0.9999999999999999,
+  final tResponse = NationalizeModel.fromJson(
+    json.decode(
+      fixture('nationalize.json'),
     ),
-  ];
-  const tNationalize = Nationalize(name: tName, countries: tCountries);
+  );
 
   const tParams = NationalizeParams(name: tName);
 
@@ -31,13 +32,13 @@ void main() {
     () async {
       // arrange
       when(mockNationalizeRepository.getPredictionCountry(tName))
-          .thenAnswer((_) async => const Right(tNationalize));
+          .thenAnswer((_) async => Right(tResponse));
 
       // act
       final result = await usecase(tParams);
 
       // assert
-      expect(result, const Right(tNationalize));
+      expect(result, Right(tResponse));
       verify(mockNationalizeRepository.getPredictionCountry(tName));
       verifyNoMoreInteractions(mockNationalizeRepository);
     },

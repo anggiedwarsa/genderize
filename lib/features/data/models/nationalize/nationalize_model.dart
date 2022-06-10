@@ -1,28 +1,60 @@
-import 'package:genderize/features/domain/entities/nationalize/nationalize.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-class NationalizeModel extends Nationalize {
+part 'nationalize_model.g.dart';
+
+@JsonSerializable()
+class NationalizeModel extends Equatable {
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'country')
+  final List<Country>? countries;
+
   const NationalizeModel({
-    required String name,
-    required List<Country>? countries,
-  }) : super(name: name, countries: countries);
+    required this.name,
+    required this.countries,
+  });
 
-  factory NationalizeModel.fromJson(Map<String, dynamic> json) {
-    return NationalizeModel(
-      name: json['name'],
-      countries: List<Country>.from(
-        json['country'].map((data) => Country.fromJson(data)),
-      ),
-    );
+  factory NationalizeModel.fromJson(Map<String, dynamic> json) => _$NationalizeModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$NationalizeModelToJson(this);
+
+  @override
+  List<Object?> get props => [
+        name,
+        countries,
+      ];
+
+  @override
+  String toString() {
+    return 'NationalizeModel{name: $name, countries: $countries}';
   }
+}
 
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'country': countries
-          ?.map(
-            (e) => e.toJson(),
-          )
-          .toList(),
-    };
+@JsonSerializable()
+class Country extends Equatable {
+  @JsonKey(name: 'country_id')
+  final String? countryId;
+  @JsonKey(name: 'probability')
+  final double? probability;
+
+  const Country({
+    required this.countryId,
+    required this.probability,
+  });
+
+  factory Country.fromJson(Map<String, dynamic> json) => _$CountryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CountryToJson(this);
+
+  @override
+  List<Object?> get props => [
+    countryId,
+    probability,
+  ];
+
+  @override
+  String toString() {
+    return 'Country{countryId: $countryId, probability: $probability}';
   }
 }

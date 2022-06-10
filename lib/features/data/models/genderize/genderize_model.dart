@@ -1,22 +1,32 @@
-import 'package:genderize/features/domain/entities/genderize/genderize.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-class GenderizeModel extends Genderize {
+part 'genderize_model.g.dart';
+
+@JsonSerializable()
+class GenderizeModel extends Equatable {
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'gender')
+  final String? gender;
+
   const GenderizeModel({
-    required String? name,
-    required String? gender,
-  }) : super(name: name, gender: gender);
+    required this.name,
+    required this.gender,
+  });
 
-  factory GenderizeModel.fromJson(Map<String, dynamic> json) {
-    return GenderizeModel(
-      name: json['name'],
-      gender: json['gender'],
-    );
-  }
+  factory GenderizeModel.fromJson(Map<String, dynamic> json) => _$GenderizeModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'gender': gender,
-    };
+  Map<String, dynamic> toJson() => _$GenderizeModelToJson(this);
+
+  @override
+  List<Object?> get props => [
+    name,
+    gender,
+  ];
+
+  @override
+  String toString() {
+    return 'GenderizeModel{name: $name, gender: $gender}';
   }
 }

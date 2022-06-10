@@ -2,57 +2,75 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genderize/features/data/models/genderize/genderize_model.dart';
-import 'package:genderize/features/domain/entities/genderize/genderize.dart';
 
 import '../../../../../fixtures/fixture_reader.dart';
 
 void main() {
-  const genderizeModel = GenderizeModel(
-    name: 'Rihanna',
-    gender: 'female',
+  final genderizeModel = GenderizeModel.fromJson(
+    json.decode(
+      fixture('genderize.json'),
+    ),
   );
 
   test(
-    'pastikan apakah subclass dari Genderize entity',
+    'pastikan fungsi fromJson bisa mengembalikan objek class model GenderizeModel',
     () async {
+      // arrange
+      final jsonMap = json.decode(fixture('genderize.json'));
+
+      // act
+      final actualModel = GenderizeModel.fromJson(jsonMap);
+
       // assert
-      expect(genderizeModel, isA<Genderize>());
+      expect(actualModel, genderizeModel);
     },
   );
 
-  group('test fungsi fromJson', () {
-    test(
-      'harus mengembalikan value dengan tipe model Genderize',
-      () async {
-        // arrange
-        final Map<String, dynamic> jsonMap =
-            json.decode(fixture('genderize.json'));
+  test(
+    'pastikan fungsi toJson bisa mengembalikan objek Map',
+    () async {
+      // arrange
+      final model = GenderizeModel.fromJson(
+        json.decode(
+          fixture('genderize.json'),
+        ),
+      );
 
-        // act
-        final result = GenderizeModel.fromJson(jsonMap);
+      // act
+      final actualMap = json.encode(model.toJson());
 
-        // assert
-        expect(result, genderizeModel);
-      },
-    );
-  });
+      // assert
+      expect(
+        actualMap,
+        json.encode(
+          genderizeModel.toJson(),
+        ),
+      );
+    },
+  );
 
-  group('test fungsi toJson', () {
-    test(
-      'harus mengembalikan data yang sama',
-      () async {
-        // arrange
-        final expectedMap = {
-          "name": "Rihanna",
-          "gender": "female",
-        };
+  test(
+    'pastikan output dari nilai props',
+    () async {
+      // assert
+      expect(
+        genderizeModel.props,
+        [
+          genderizeModel.name,
+          genderizeModel.gender,
+        ],
+      );
+    },
+  );
 
-        // act
-        final result = genderizeModel.toJson();
-
-        // assert
-        expect(result, expectedMap);
-      },
-    );
-  });
+  test(
+    'pastikan output dari fungsi toString',
+    () async {
+      // assert
+      expect(
+        genderizeModel.toString(),
+        'GenderizeModel{name: ${genderizeModel.name}, gender: ${genderizeModel.gender}}',
+      );
+    },
+  );
 }

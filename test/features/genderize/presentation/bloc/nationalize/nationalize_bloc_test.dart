@@ -1,13 +1,16 @@
+import 'dart:convert';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genderize/core/error/failures.dart';
 import 'package:genderize/core/util/string_helper.dart';
-import 'package:genderize/features/domain/entities/nationalize/nationalize.dart';
+import 'package:genderize/features/data/models/nationalize/nationalize_model.dart';
 import 'package:genderize/features/domain/usecases/nationalize/get_prediction_country.dart';
 import 'package:genderize/features/presentation/bloc/nationalize/nationalize_bloc.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../../fixtures/fixture_reader.dart';
 import '../../../../../mock_helper.mocks.dart';
 
 void main() {
@@ -29,26 +32,21 @@ void main() {
   );
 
   group('getPredictionCountry', () {
-    const tName = 'Anggi';
-    const tCountries = <Country>[
-      Country(
-        countryId: 'ID',
-        probability: 0.9999999999999999,
+    final tNationalize = NationalizeModel.fromJson(
+      json.decode(
+        fixture('nationalize.json'),
       ),
-    ];
-    const tNationalize = Nationalize(
-      name: tName,
-      countries: tCountries,
     );
-    const tEvent = PredictCountryByName(name: tName);
-    const tParams = NationalizeParams(name: tName);
+    final tName = tNationalize.name!;
+    final tEvent = PredictCountryByName(name: tName);
+    final tParams = NationalizeParams(name: tName);
 
     blocTest(
       'pastikan emit [NationalizeLoading, NationalizeLoaded] ketika terima event '
       'PredictCountryByName dengan proses berhasil',
       build: () {
         when(mockGetPredictionCountry(any))
-            .thenAnswer((_) async => const Right(tNationalize));
+            .thenAnswer((_) async => Right(tNationalize));
         return nationalizeBloc;
       },
       act: (NationalizeBloc bloc) {
@@ -56,7 +54,7 @@ void main() {
       },
       expect: () => [
         NationalizeLoading(),
-        const NationalizeLoaded(nationalize: tNationalize),
+        NationalizeLoaded(nationalize: tNationalize),
       ],
       verify: (_) async {
         verify(mockGetPredictionCountry(tParams));
